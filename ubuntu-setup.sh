@@ -123,4 +123,20 @@ else
   echo "[*] No Flatpak apps listed in the array to install"
 fi
 
+echo "[+] Configuring user shell environment (.bashrc)..."
+
+# Safely append configurations if they aren't already there
+if ! sudo -u "$REAL_USER" grep -q 'eval "$(fzf --bash)"' "/home/$REAL_USER/.bashrc"; then
+    sudo -u "$REAL_USER" bash -c 'cat << "EOF" >> "$HOME/.bashrc"
+
+# --- Added by setup.sh ---
+eval "$(fzf --bash)"
+. "$HOME/.cargo/env"
+EOF
+'
+    echo "    -> Added fzf and cargo configurations to .bashrc"
+else
+    echo "    -> .bashrc already contains the configurations. Skipping."
+fi
+
 echo "[+] Success! System Setup Done."
