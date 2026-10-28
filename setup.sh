@@ -17,9 +17,9 @@ REAL_USER="${SUDO_USER:-$(logname 2>/dev/null || whoami)}"
 # SECTION 1: Root Tasks (Apt & System Configs)
 # ---------------------------------------------------------
 
-echo "[+] Updating package lists and installing Flatpak & dependencies..."
+echo "[+] Updating package lists and installing programs and dependencies..."
 apt update
-apt install -y flatpak 
+apt install -y build-essential systemd-zram-generator keyd flatpak 
 
 echo "[+] Creating /etc/systemd/zram-generator.conf..."
 mkdir -p /etc/systemd
@@ -46,6 +46,8 @@ capslock = overload(control, esc)
 esc = capslock
 EOF
 
+echo "[+] Explicitly enabling and starting the keyd service..."
+systemctl enable --now keyd
 
 # ---------------------------------------------------------
 # SECTION 2: User Tasks (Flatpak & Flathub apps)
@@ -54,13 +56,23 @@ EOF
 echo "[+] Setting up Flathub repository for user: $REAL_USER..."
 
 # Add Flathub for the user (does not require root)
-sudo -u "$REAL_USER" flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+sudo -u "$REAL_USER" flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
 # Define the flatpak apps you want to install here
 FLATPAK_APPS=(
-  # "com.spotify.Client"
-  # "org.videolan.VLC"
-  # "com.discordapp.Discord"
+	org.libreoffice.LibreOffice
+	be.alexandervanhee.gradia
+	com.mattjakeman.ExtensionManager
+	com.github.tchx84.Flatseal
+	com.usebottles.bottles
+	com.obsproject.Studio
+	io.github.Faugus.faugus-launcher
+	io.github.diegopvlk.Cine
+	io.github.flattool.Warehouse
+	io.github.sitraorg.sitra
+	it.mijorus.gearlever
+	org.blender.Blender
+	org.localsend.localsend_app
 )
 
 if [ ${#FLATPAK_APPS[@]} -gt 0 ]; then
