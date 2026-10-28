@@ -19,7 +19,29 @@ REAL_USER="${SUDO_USER:-$(logname 2>/dev/null || whoami)}"
 
 echo "[+] Updating package lists and installing programs and dependencies..."
 apt update
-apt install -y build-essential systemd-zram-generator keyd flatpak 
+apt install -y build-essential systemd-zram-generator keyd flatpak curl git ca-certificates 
+
+echo "[+] Setting up Docker's official GPG key and repository..."
+install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+chmod a+r /etc/apt/keyrings/docker.asc
+
+# Add the repository to Apt sources
+cat << EOF > /etc/apt/sources.list.d/docker.sources
+Types: deb
+URIs: https://download.docker.com/linux/ubuntu
+Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
+Components: stable
+Architectures: $(dpkg --print-architecture)
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+
+echo "[+] Installing Docker Engine and plugins..."
+apt update
+apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+echo "[+] Adding user '$REAL_USER' to the docker group..."
+usermod -aG docker "$REAL_USER"
 
 echo "[+] Creating /etc/systemd/zram-generator.conf..."
 mkdir -p /etc/systemd
