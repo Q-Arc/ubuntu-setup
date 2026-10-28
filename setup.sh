@@ -19,7 +19,7 @@ REAL_USER="${SUDO_USER:-$(logname 2>/dev/null || whoami)}"
 
 echo "[+] Updating package lists and installing programs and dependencies..."
 apt update
-apt install -y build-essential systemd-zram-generator keyd flatpak curl git ca-certificates 
+apt install -y build-essential systemd-zram-generator keyd flatpak curl git ca-certificates libfuse2t64 ripgrep fastfetch btop fd-find bat tealdeer fzf eza vim trash-cli ncdu duf gufw wl-clipboard pandoc ubuntu-restricted-addons ubuntu-restricted-extras qalculate-gtk
 
 echo "[+] Setting up Docker's official GPG key and repository..."
 install -m 0755 -d /etc/apt/keyrings
@@ -42,6 +42,7 @@ apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker
 
 echo "[+] Adding user '$REAL_USER' to the docker group..."
 usermod -aG docker "$REAL_USER"
+systemctl enable --now docker
 
 echo "[+] Creating /etc/systemd/zram-generator.conf..."
 mkdir -p /etc/systemd
@@ -72,8 +73,17 @@ echo "[+] Explicitly enabling and starting the keyd service..."
 systemctl enable --now keyd
 
 # ---------------------------------------------------------
-# SECTION 2: User Tasks (Flatpak & Flathub apps)
+# SECTION 2: User Tasks (Symlinks, Flatpak & Flathub apps)
 # ---------------------------------------------------------
+
+echo "[+] Creating user binary directory and symlinks for bat and fd..."
+
+# Ensure ~/.local/bin exists for the regular user
+sudo -u "$REAL_USER" mkdir -p "/home/$REAL_USER/.local/bin"
+
+# Create symlinks (ignoring error if they already exist)
+sudo -u "$REAL_USER" ln -sf /usr/bin/batcat "/home/$REAL_USER/.local/bin/bat"
+sudo -u "$REAL_USER" ln -sf /usr/bin/fdfind "/home/$REAL_USER/.local/bin/fd"
 
 echo "[+] Setting up Flathub repository for user: $REAL_USER..."
 
