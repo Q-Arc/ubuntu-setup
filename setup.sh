@@ -114,7 +114,7 @@ if [ ${#FLATPAK_APPS[@]} -gt 0 ]; then
     sudo -u "$REAL_USER" flatpak install --user -y flathub "$app"
   done
 else
-  echo "[*] No Flatpak apps listed in the array to install. You can add them inside the script later."
+  echo "[*] No Flatpak apps listed in the array to install"
 fi
 
-echo "[+] Success! System configurations and Flatpak setup completed."
+echo "[+] Success! System Setup Done."
