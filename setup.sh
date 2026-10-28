@@ -72,6 +72,12 @@ EOF
 echo "[+] Explicitly enabling and starting the keyd service..."
 systemctl enable --now keyd
 
+echo "[+] Disabling unnecessary system services..."
+systemctl disable --now NetworkManager-wait-online.service 2>/dev/null || true
+systemctl disable --now switcheroo-control.service 2>/dev/null || true
+systemctl disable --now ModemManager.service 2>/dev/null || true
+systemctl disable --now cups.service 2>/dev/null || true
+
 # ---------------------------------------------------------
 # SECTION 2: User Tasks (Symlinks, Flatpak & Flathub apps)
 # ---------------------------------------------------------
