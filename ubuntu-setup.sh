@@ -100,11 +100,11 @@ sudo -u "$REAL_USER" flatpak remote-add --if-not-exists flathub https://dl.flath
 FLATPAK_APPS=(
 	org.libreoffice.LibreOffice
 	be.alexandervanhee.gradia
-	com.mattjakeman.ExtensionManager
+	# com.mattjakeman.ExtensionManager
 	com.github.tchx84.Flatseal
-	com.usebottles.bottles
+	# com.usebottles.bottles
 	com.obsproject.Studio
-	io.github.Faugus.faugus-launcher
+	# io.github.Faugus.faugus-launcher
 	io.github.diegopvlk.Cine
 	io.github.flattool.Warehouse
 	io.github.sitraorg.sitra
